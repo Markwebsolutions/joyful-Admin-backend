@@ -12,9 +12,10 @@ public class Admin {
 	@Id
 	private String loginID;
 	private String password;
+
 	@Override
 	public String toString() {
 		return "Admin [LoginID=" + loginID + ", password=" + password + "]";
 	}
-	
+
 }
