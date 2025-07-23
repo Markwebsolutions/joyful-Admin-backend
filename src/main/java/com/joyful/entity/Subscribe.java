@@ -1,5 +1,7 @@
 package com.joyful.entity;
 
+import org.springframework.data.convert.Jsr310Converters.LocalDateTimeToDateConverter;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +13,9 @@ public class Subscribe {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer subid;
 	private String email;
+	
+	private LocalDateTimeToDateConverter date;
+	
 	public Integer getSubid() {
 		return subid;
 	}

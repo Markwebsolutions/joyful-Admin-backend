@@ -54,20 +54,9 @@ public class ProductController {
 	private ObjectMapper objectMapper;
 
 	@PostMapping
-	public Product createProduct(@RequestBody Map<String, Object> payload) {
+	public Product createProduct(@RequestBody Product product) {
 		try {
-			System.out.println("🟢 Incoming Payload (Create): " + payload);
-			Object vm = payload.remove("variantsMap"); // ⬅️ Exclude before conversion
-			System.out.println("🔵 Raw variantsMap (Create): " + vm);
-
-			Product product = objectMapper.convertValue(payload, Product.class);
-
-			if (vm != null) {
-				String vmJson = objectMapper.writeValueAsString(vm);
-				System.out.println("🟣 Serialized variantsMap (Create): " + vmJson);
-				product.setVariantsMap(vmJson);
-			}
-
+			System.out.println("🟢 Creating product with variantsMap: " + product.getVariantsMap());
 			return productService.addProduct(product);
 		} catch (Exception e) {
 			System.err.println("❌ Error during product creation: " + e.getMessage());
@@ -76,23 +65,9 @@ public class ProductController {
 	}
 
 	@PutMapping("/{id}")
-	public Product updateProduct(@PathVariable Long id, @RequestBody Map<String, Object> payload) {
+	public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
 		try {
-			System.out.println("🟢 Incoming Payload (Update): " + payload);
-
-			Object vm = payload.remove("variantsMap"); // Remove before conversion
-
-			System.out.println("🔵 Raw variantsMap (Update): " + vm);
-
-			Product product = objectMapper.convertValue(payload, Product.class);
-
-			if (vm != null) {
-				String vmJson = objectMapper.writeValueAsString(vm);
-				System.out.println("🟣 Serialized variantsMap (Update): " + vmJson);
-
-				product.setVariantsMap(vmJson);
-			}
-
+			System.out.println("🟢 Updating product with variantsMap: " + product.getVariantsMap());
 			return productService.updateProduct(id, product);
 		} catch (Exception e) {
 			System.err.println("❌ Error during product update: " + e.getMessage());
