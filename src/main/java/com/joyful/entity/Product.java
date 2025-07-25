@@ -70,7 +70,7 @@ public class Product {
 	public void setIspublished(boolean ispublished) {
 		this.ispublished = ispublished;
 	}
-
+	
 	// Subcategory Relationship
 	@ManyToMany
 	@JoinTable(name = "productsubcategory", joinColumns = @JoinColumn(name = "productid"), inverseJoinColumns = @JoinColumn(name = "subcategoryid"))

@@ -44,16 +44,6 @@ public class CategoryServiceImp implements CategoryService {
 		categoryRepo.deleteById(id);
 	}
 
-//	@Override
-//	public Category getCategoryById(Long id) {
-//		return categoryRepo.findById(id).orElseThrow(() -> new RuntimeException("Category not found"));
-//	}
-//
-//	@Override
-//	public List<Category> getAllCategories() {
-//		return categoryRepo.findAll();
-//	}
-
 	@Override
 	public Category getCategoryById(Long id) {
 	    Category category = categoryRepo.findById(id)
