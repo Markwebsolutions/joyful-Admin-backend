@@ -48,7 +48,7 @@ public class Category {
 
 	@Column(name = "ispublished", nullable = false)
 	private boolean isPublished = false;
-
+	
 	// ✅ CORRECTED MANY-TO-MANY relationship with Subcategory
 	@ManyToMany(mappedBy = "categories")
 	@JsonIgnoreProperties("categories")

@@ -91,6 +91,6 @@ public class ProductEnquiryController {
         } catch (Exception e) {
             response.put("message", "Error deleting enquiry: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
+        } 
     }
 } 
