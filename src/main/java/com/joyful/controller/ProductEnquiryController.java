@@ -93,4 +93,12 @@ public class ProductEnquiryController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         } 
     }
+    
+    @DeleteMapping("/enquiries")
+    public ResponseEntity<?> deleteAllEnquiries() {
+        enquiryRepository.deleteAll(); // or your service logic
+        return ResponseEntity.ok(Map.of("message", "All enquiries deleted successfully"));
+    }
+
+
 } 

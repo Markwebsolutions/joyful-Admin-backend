@@ -41,8 +41,8 @@ public class GetInTouchController {
 		return ResponseEntity.ok("Deleted successfully.");
 	}
 
-	@DeleteMapping("/deleteAll")
-	public ResponseEntity<String> deleteAll() {
+	@DeleteMapping("/deleteAllGeneralEnquiry")
+	public ResponseEntity<String> deleteAllGeneralEnquiry() {
 		getInTouchrepo.deleteAll();
 		return ResponseEntity.ok("all deleted");
 	}
