@@ -11,31 +11,45 @@ import com.joyful.entity.Subcategory;
 import com.joyful.repository.CategoryRepository;
 import com.joyful.repository.SubcategoryRepository;
 import com.joyful.service.CategoryService;
+import com.joyful.service.ImageStorageService;
 
 @Service
 public class CategoryServiceImp implements CategoryService {
 
 	@Autowired
 	private CategoryRepository categoryRepo;
+
 	@Autowired
 	private SubcategoryRepository subcategoryRepository;
 
+	@Autowired
+	private ImageStorageService imageStorageService;
+
 	@Override
 	public Category addCategory(Category category) {
+		// Process image before saving
+		String processedImage = imageStorageService.storeImage(category.getImagelink());
+		category.setImagelink(processedImage);
 		return categoryRepo.save(category);
 	}
 
 	@Override
 	public Category updateCategory(Long id, Category updatedCategory) {
 		Category cat = categoryRepo.findById(id).orElseThrow(() -> new RuntimeException("Category not found"));
+
 		cat.setName(updatedCategory.getName());
 		cat.setDescription(updatedCategory.getDescription());
 		cat.setSearchkeywords(updatedCategory.getSearchkeywords());
 		cat.setSeotitle(updatedCategory.getSeotitle());
-		cat.setImagelink(updatedCategory.getImagelink());
+
+		// Download + FTP upload image, then store final URL
+		String processedImage = imageStorageService.storeImage(updatedCategory.getImagelink());
+		cat.setImagelink(processedImage);
+
 		cat.setSeokeywords(updatedCategory.getSeokeywords());
 		cat.setSeodescription(updatedCategory.getSeodescription());
 		cat.setPublished(updatedCategory.getPublished());
+
 		return categoryRepo.save(cat);
 	}
 
@@ -46,43 +60,37 @@ public class CategoryServiceImp implements CategoryService {
 
 	@Override
 	public Category getCategoryById(Long id) {
-	    Category category = categoryRepo.findById(id)
-	            .orElseThrow(() -> new RuntimeException("Category not found"));
+		Category category = categoryRepo.findById(id).orElseThrow(() -> new RuntimeException("Category not found"));
 
-	    if (category.getSubcategories() != null) {
-	        for (Subcategory subcategory : category.getSubcategories()) {
-	            // force-load products
-	            subcategory.setProducts(subcategory.getProducts());
-	        }
-	    }
-
-	    return category;
+		if (category.getSubcategories() != null) {
+			for (Subcategory subcategory : category.getSubcategories()) {
+				subcategory.setProducts(subcategory.getProducts()); // force-load products
+			}
+		}
+		return category;
 	}
 
 	@Override
 	public List<Category> getAllCategories() {
-	    List<Category> categories = categoryRepo.findAll();
+		List<Category> categories = categoryRepo.findAll();
 
-	    for (Category category : categories) {
-	        if (category.getSubcategories() != null) {
-	            for (Subcategory subcategory : category.getSubcategories()) {
-	                subcategory.setProducts(subcategory.getProducts());
-	            }
-	        }
-	    }
-
-	    return categories;
+		for (Category category : categories) {
+			if (category.getSubcategories() != null) {
+				for (Subcategory subcategory : category.getSubcategories()) {
+					subcategory.setProducts(subcategory.getProducts());
+				}
+			}
+		}
+		return categories;
 	}
-
 
 	@Override
 	public Optional<Category> getCategoryByName(String name) {
-		return categoryRepo.findByNameIgnoreCase(name); // or findByNameIgnoreCase(name)
+		return categoryRepo.findByNameIgnoreCase(name);
 	}
 
 	@Override
 	public boolean hasSubcategories(Long id) {
 		return subcategoryRepository.existsByCategoryId(id);
 	}
-
 }

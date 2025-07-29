@@ -34,8 +34,14 @@ public class SubcategoryController {
 
 	@PostMapping
 	public Subcategory addSubcategory(@RequestBody Subcategory subcategory) {
-		return subcategoryService.addSubcategory(subcategory);
+	    try {
+	        return subcategoryService.addSubcategory(subcategory);
+	    } catch (Exception e) {
+	        e.printStackTrace(); // See full stack trace in logs
+	        throw e;
+	    }
 	}
+
 
 	@PutMapping("/{id}")
 	public Subcategory updateSubcategory(@PathVariable Long id, @RequestBody Subcategory subcategory) {
@@ -67,5 +73,7 @@ public class SubcategoryController {
 	public List<Subcategory> getSubcategoriesByCategory(@PathVariable Long categoryId) {
 		return subcategoryRepository.findByCategoryId(categoryId);
 	}
+	
+
 
 }

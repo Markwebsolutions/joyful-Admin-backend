@@ -4,52 +4,42 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.joyful.entity.Feedback;
-import com.joyful.repository.FeedbackRepository;
+import com.joyful.service.FeedbackService;
 
 @RestController
 @CrossOrigin("*")
 public class FeedbackController {
 
-	@Autowired
-	FeedbackRepository feedbackrepo;
+    @Autowired
+    private FeedbackService feedbackService;
 
-	@GetMapping("/feedbacks")
-	public List<Feedback> getallfeedback() {
-		List<Feedback> all = feedbackrepo.findAll();
-		return all;
-	}
+    @GetMapping("/feedbacks")
+    public List<Feedback> getAllFeedback() {
+        return feedbackService.getAllFeedback();
+    }
 
-	@PostMapping("/feedback")
-	public Feedback createFeedback(@RequestBody Feedback feedback) {
-		Feedback save = feedbackrepo.save(feedback);
-		return save;
-	}
+    // ✅ Create or update based on feedbackid (POST used for both)
+    @PostMapping("/feedback")
+    public Feedback createOrUpdateFeedback(@RequestBody Feedback feedback) {
+        if (feedback.getFeedbackid() != null) {
+            return feedbackService.updateFeedback(feedback);
+        } else {
+            return feedbackService.saveFeedback(feedback);
+        }
+    }
 
-	@DeleteMapping("/deletefeedback")
-	public String deleteFeedback(@RequestParam Integer id) {
-		feedbackrepo.deleteById(id);
-		return "deleted";
-	}
+    @DeleteMapping("/deletefeedback")
+    public String deleteFeedback(@RequestParam Integer id) {
+        feedbackService.deleteById(id);
+        return "deleted";
+    }
 
-	@DeleteMapping("/deleteAllFeedback")
-	public ResponseEntity<String> deleteAll() {
-		feedbackrepo.deleteAll();
-		return ResponseEntity.ok("All deleted");
-	}
-	
-	@PutMapping("/feedbacks/update")
-	public Feedback updateFeedback(@RequestBody Feedback feedback) {
-	    return feedbackrepo.save(feedback);
-	}
-
+    @DeleteMapping("/deleteAllFeedback")
+    public ResponseEntity<String> deleteAll() {
+        feedbackService.deleteAll();
+        return ResponseEntity.ok("All deleted");
+    }
 }

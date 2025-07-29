@@ -10,6 +10,7 @@ import com.joyful.entity.Category;
 import com.joyful.entity.Subcategory;
 import com.joyful.repository.CategoryRepository;
 import com.joyful.repository.SubcategoryRepository;
+import com.joyful.service.ImageStorageService;
 import com.joyful.service.SubcategoryService;
 
 @Service
@@ -21,22 +22,11 @@ public class SubcategoryServiceImp implements SubcategoryService {
 	@Autowired
 	private CategoryRepository categoryRepo;
 
-//	@Override
-//	public Subcategory addSubcategory(Subcategory subcategory) {
-//		// ✅ Fetch valid categories from DB by ID
-//		List<Category> validCategories = subcategory.getCategories().stream()
-//				.map(cat -> categoryRepo.findById(cat.getId())
-//						.orElseThrow(() -> new RuntimeException("Category not found: " + cat.getId())))
-//				.collect(Collectors.toList());
-//
-//		subcategory.setCategories(validCategories);
-//
-//		return subcategoryRepo.save(subcategory);
-//	}
-//	newly added today
+	@Autowired
+	private ImageStorageService imageStorageService;
+
 	@Override
 	public Subcategory addSubcategory(Subcategory subcategory) {
-		// If frontend sent only categoryIds, convert them to full Category entities
 		if (subcategory.getCategoryIds() != null && !subcategory.getCategoryIds().isEmpty()) {
 			List<Category> validCategories = subcategory.getCategoryIds().stream()
 					.map(catId -> categoryRepo.findById(catId)
@@ -44,6 +34,10 @@ public class SubcategoryServiceImp implements SubcategoryService {
 					.collect(Collectors.toList());
 			subcategory.setCategories(validCategories);
 		}
+
+		// Process image before saving
+		String processedImage = imageStorageService.storeImage(subcategory.getImagepath());
+		subcategory.setImagepath(processedImage);
 
 		return subcategoryRepo.save(subcategory);
 	}
@@ -56,13 +50,16 @@ public class SubcategoryServiceImp implements SubcategoryService {
 
 			sub.setName(updatedSubcategory.getName());
 			sub.setDescription(updatedSubcategory.getDescription());
-			sub.setImagepath(updatedSubcategory.getImagepath());
+
+			// Process image before saving
+			String processedImage = imageStorageService.storeImage(updatedSubcategory.getImagepath());
+			sub.setImagepath(processedImage);
+
 			sub.setMetatitle(updatedSubcategory.getMetatitle());
 			sub.setMetadescription(updatedSubcategory.getMetadescription());
 			sub.setSeokeywords(updatedSubcategory.getSeokeywords());
 			sub.setIspublished(updatedSubcategory.isIspublished());
 
-			// ✅ Update category list
 			List<Category> validCategories = updatedSubcategory.getCategories().stream()
 					.map(cat -> categoryRepo.findById(cat.getId())
 							.orElseThrow(() -> new RuntimeException("Category not found: " + cat.getId())))
