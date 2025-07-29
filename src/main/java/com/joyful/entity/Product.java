@@ -5,11 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.joyful.converter.VariantMapConverter;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,6 +28,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "product")
 public class Product {
 
 	@Id
@@ -41,7 +44,7 @@ public class Product {
 
 	@Column(name = "mainimage", columnDefinition = "TEXT")
 	private String mainimage;
-	
+
 	@Column(name = "hoverimage", columnDefinition = "TEXT")
 	private String hoverimage;
 	@ElementCollection
@@ -63,36 +66,38 @@ public class Product {
 
 	@Column(name = "ispublished", nullable = false)
 	private Boolean ispublished;
-	
-	@Column(name="newarrival",nullable=false)
+
+	@Column(name = "newarrival", nullable = false)
 	private Boolean newarrival;
 
 	public void setIspublished(boolean ispublished) {
 		this.ispublished = ispublished;
 	}
-	
+
 	// Subcategory Relationship
 	@ManyToMany
 	@JoinTable(name = "productsubcategory", joinColumns = @JoinColumn(name = "productid"), inverseJoinColumns = @JoinColumn(name = "subcategoryid"))
 	@JsonIgnoreProperties("products")
 	private Set<Subcategory> subcategories = new HashSet<>();
 
-	@Convert(converter = VariantMapConverter.class)
-	@Column(name = "variantsmap", columnDefinition = "TEXT")
+	@JdbcTypeCode(SqlTypes.JSON)
+	@Column(name = "variantsmap", columnDefinition = "jsonb")
 	private Map<String, List<Variant>> variantsMap;
-	
+
 	public Set<Subcategory> getSubcategories() {
-	    return subcategories;
+		return subcategories;
 	}
+
 	public void setSubcategories(Set<Subcategory> subcategories) {
-	    this.subcategories = subcategories;
+		this.subcategories = subcategories;
 	}
-	
+
 	public Boolean getNewarrival() {
-	    return newarrival;
+		return newarrival;
 	}
+
 	public void setNewarrival(Boolean newarrival) {
-	    this.newarrival = newarrival;
+		this.newarrival = newarrival;
 	}
 
 }
